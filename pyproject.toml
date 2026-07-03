@@ -1,0 +1,61 @@
+[project]
+name = "localagent"
+version = "0.1.0"
+description = "Educational lab of AI agents: chat+memory, tool-calling, RAG, and hybrid routing on local Ollama."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langchain>=0.3.27",
+    "langchain-core>=0.3.40",
+    "langchain-community>=0.3.20",
+    "langchain-ollama>=0.3.0",
+    "langgraph>=0.2.74",
+    "numpy>=1.26",
+    "chromadb>=0.5.0",
+    "llama-index-core>=0.11.0",
+    "llama-index-llms-ollama>=0.3.0",
+    "llama-index-embeddings-ollama>=0.3.0",
+    "haystack-ai>=2.7.0",
+    "ollama-haystack>=1.1.0",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+    "python-dotenv>=1.0",
+    "ddgs>=9.14.4",
+    "langchain-mcp-adapters>=0.2.2",
+    "llama-index-vector-stores-chroma>=0.5.5",
+    "chroma-haystack>=4.3.0",
+    "rank-bm25>=0.2.2",
+    "sentence-transformers>=5.5.1",
+]
+
+[project.scripts]
+chat-buffer = "localagent.agents.chat_buffer:main"
+chat-summary = "localagent.agents.chat_summary:main"
+tools-react = "localagent.agents.tools_react:main"
+tools-native = "localagent.agents.tools_native:main"
+rag-numpy = "localagent.agents.rag_numpy:main"
+rag-chroma = "localagent.agents.rag_chroma:main"
+rag-llamaindex = "localagent.agents.rag_llamaindex:main"
+rag-llamaindex-chroma = "localagent.agents.rag_llamaindex_chroma:main"
+rag-haystack = "localagent.agents.rag_haystack:main"
+rag-rerank = "localagent.agents.rag_rerank:main"
+hybrid-semantic = "localagent.agents.hybrid_semantic:main"
+hybrid-llm = "localagent.agents.hybrid_llm:main"
+hybrid-adaptive = "localagent.agents.hybrid_adaptive:main"
+hybrid-adaptive-plus = "localagent.agents.hybrid_adaptive_plus:main"
+agentic-rag = "localagent.agents.agentic_rag:main"
+rag-eval = "localagent.eval:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/localagent"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
