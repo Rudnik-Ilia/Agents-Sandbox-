@@ -9,6 +9,7 @@ mechanism at a time and watch it work through the logs.
 - Model (generation): `gemma4:e4b`
 - Model (embeddings): `mxbai-embed-large:latest`
 - Host: `http://10.100.102.10:11434` (configurable)
+- Chat provider: local Ollama by default, or OpenRouter with `LLM_PROVIDER=openrouter`
 
 ## What is included
 
@@ -45,6 +46,10 @@ Configure the connection (copy and edit if your host differs):
 ```bash
 copy .env.example .env
 ```
+
+To use OpenRouter for chat generation, set `LLM_PROVIDER=openrouter`,
+`OPENROUTER_API_KEY`, and `OPENROUTER_MODEL` in `.env`. Embeddings still use
+Ollama via `EMBED_MODEL`, so RAG commands still need the local embedding model.
 
 ## Running
 

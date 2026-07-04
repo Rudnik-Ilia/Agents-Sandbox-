@@ -1,18 +1,44 @@
-"""Factory helpers for the local Ollama chat model and embeddings."""
+"""Factory helpers for chat models and local Ollama embeddings."""
 
 from __future__ import annotations
 
+from langchain_core.language_models import BaseChatModel
 from langchain_core.runnables import Runnable
 from langchain_ollama import ChatOllama, OllamaEmbeddings
+from langchain_openai import ChatOpenAI
 
 from localagent.config import get_settings
 
 
+def _openrouter_headers() -> dict[str, str]:
+    settings = get_settings()
+    headers = {}
+    if settings.openrouter_site_url:
+        headers["HTTP-Referer"] = settings.openrouter_site_url
+    if settings.openrouter_app_name:
+        headers["X-Title"] = settings.openrouter_app_name
+    return headers
+
+
 def build_chat_llm(
     temperature: float | None = None, model: str | None = None, **kwargs: object
-) -> ChatOllama:
-    """Create a `ChatOllama` client pointed at the configured Ollama host."""
+) -> BaseChatModel:
+    """Create a chat model client for the configured provider."""
     settings = get_settings()
+    provider = settings.llm_provider.lower().strip()
+    if provider == "openrouter":
+        if not settings.openrouter_api_key:
+            raise ValueError("OPENROUTER_API_KEY is required when LLM_PROVIDER=openrouter")
+        return ChatOpenAI(
+            model=model or settings.openrouter_model,
+            api_key=settings.openrouter_api_key,
+            base_url=settings.openrouter_base_url,
+            temperature=settings.llm_temperature if temperature is None else temperature,
+            timeout=settings.llm_request_timeout,
+            default_headers=_openrouter_headers() or None,
+        )
+    if provider != "ollama":
+        raise ValueError(f"unknown LLM_PROVIDER: {settings.llm_provider}")
     return ChatOllama(
         model=model or settings.llm_model,
         base_url=settings.ollama_base_url,
@@ -21,7 +47,6 @@ def build_chat_llm(
         num_ctx=settings.llm_num_ctx,
         reasoning=settings.llm_think,
         client_kwargs={"timeout": settings.llm_request_timeout},
-        **kwargs,
     )
 
 
@@ -29,11 +54,13 @@ def with_reliability(runnable: Runnable) -> Runnable:
     """Add retries and a fallback model to any chat runnable.
 
     Works on plain, tool-bound, or structured-output runnables: retries transient
-    Ollama errors/timeouts, then falls back to the configured fallback model.
+    errors/timeouts, then falls back to the configured fallback model.
     """
     settings = get_settings()
     retried = runnable.with_retry(stop_after_attempt=max(1, settings.llm_max_retries))
-    if settings.fallback_model and settings.fallback_model != settings.llm_model:
+    provider = settings.llm_provider.lower().strip()
+    primary_model = settings.openrouter_model if provider == "openrouter" else settings.llm_model
+    if settings.fallback_model and settings.fallback_model != primary_model:
         fallback = build_chat_llm(model=settings.fallback_model).with_retry(
             stop_after_attempt=max(1, settings.llm_max_retries)
         )
