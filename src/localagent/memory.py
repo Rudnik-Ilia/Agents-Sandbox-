@@ -111,14 +111,7 @@ class BufferMemory(ChatMemory):
 
 class SummaryBufferMemory(ChatMemory):
     """Keep recent turns verbatim and summarise older turns with the LLM."""
-
-    def __init__(
-        self,
-        llm: BaseChatModel,
-        session: str = "default",
-        persist: bool = False,
-        window: int = 6,
-    ) -> None:
+    def __init__(self, llm: BaseChatModel, session: str = "default", persist: bool = False, window: int = 6) -> None:
         self._llm = llm
         self._window = window
         self._summary = ""

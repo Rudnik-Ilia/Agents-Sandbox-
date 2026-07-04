@@ -11,22 +11,14 @@ import argparse
 from localagent.soul import set_soul_enabled
 
 
-def parse_agent_flags(
-    description: str, *, rag: bool = False, persist: bool = False
-) -> argparse.Namespace:
+def parse_agent_flags(description: str, *, rag: bool = False, persist: bool = False) -> argparse.Namespace:
     """Parse common agent flags and apply the SOUL toggle.
 
     Returns the parsed namespace. ``--no-soul`` is always available; ``rag`` adds
     ``--no-index``/``--drop``; ``persist`` adds ``--persist``.
     """
     parser = argparse.ArgumentParser(description=description)
-    parser.add_argument(
-        "--no-soul",
-        dest="soul",
-        action="store_false",
-        default=True,
-        help="do not load SOUL.md into the system prompt",
-    )
+    parser.add_argument("--no-soul", dest="soul", action="store_false", default=True, help="do not load SOUL.md into the system prompt")
     if persist:
         parser.add_argument("--persist", action="store_true", help="persist memory to SQLite across runs")
     if rag:

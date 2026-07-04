@@ -4,6 +4,8 @@ An educational lab of AI agent architectures, built on **LangChain** and a local
 **Ollama** server. Each variant is a separate, runnable CLI so you can study one
 mechanism at a time and watch it work through the logs.
 
+![title](/png.jpg)
+
 - Model (generation): `gemma4:e4b`
 - Model (embeddings): `mxbai-embed-large:latest`
 - Host: `http://10.100.102.10:11434` (configurable)
