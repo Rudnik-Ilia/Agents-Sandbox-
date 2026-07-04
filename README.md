@@ -1,6 +1,6 @@
 # LocalAgent
 
-![title](/png.jpg)
+![title](/png.png)
 
 An educational lab of AI agent architectures, built on **LangChain** and a local
 **Ollama** server. Each variant is a separate, runnable CLI so you can study one
